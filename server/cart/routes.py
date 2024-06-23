@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from extensions import db
+from bson.objectid import ObjectId
 
 cart_bp = Blueprint('cart', __name__)
 
@@ -9,9 +10,14 @@ def add_to_cart():
     db.cart.insert_one(data)
     return jsonify({"message": "Item added to cart"}), 201
 
-@cart_bp.route('/checkout', methods=['POST'])
-def checkout():
-    data = request.json
-    db.orders.insert_one(data)
-    db.cart.delete_many({"user_id": data["user_id"]})
-    return jsonify({"message": "Order placed successfully"}), 201
+@cart_bp.route('/<user_id>', methods=['GET'])
+def get_cart_items(user_id):
+    cart_items = list(db.cart.find({"user_id": user_id}))
+    for item in cart_items:
+        item["_id"] = str(item["_id"])
+    return jsonify(cart_items), 200
+
+@cart_bp.route('/remove/<item_id>', methods=['DELETE'])
+def remove_from_cart(item_id):
+    db.cart.delete_one({"_id": ObjectId(item_id)})
+    return jsonify({"message": "Item removed from cart"}), 200

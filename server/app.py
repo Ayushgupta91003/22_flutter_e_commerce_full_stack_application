@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from auth.routes import auth_bp
 from items.routes import items_bp
 from cart.routes import cart_bp
