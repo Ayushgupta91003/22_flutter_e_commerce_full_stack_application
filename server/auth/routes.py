@@ -1,11 +1,9 @@
-import jwt
 import datetime
 from flask import Blueprint, request, jsonify
 from extensions import db
 from bson.objectid import ObjectId
 
 auth_bp = Blueprint('auth', __name__)
-SECRET_KEY = "your_secret_key"
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -20,11 +18,7 @@ def login():
     data = request.json
     user = db.users.find_one({"email": data["email"], "password": data["password"]})
     if user:
-        token = jwt.encode({
-            'user_id': str(user['_id']),
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-        }, SECRET_KEY, algorithm='HS256')
-        return jsonify({"token": token}), 200
+        return jsonify({"user_id": str(user['_id'])}), 200
     else:
         return jsonify({"message": "Invalid credentials"}), 401
 
@@ -37,3 +31,16 @@ def update_profile():
     update_fields = {k: v for k, v in data.items() if k != "email"}
     db.users.update_one({"email": email}, {"$set": update_fields})
     return jsonify({"message": "Profile updated successfully"}), 200
+
+@auth_bp.route('/profile', methods=['GET'])
+def get_profile():
+    user_id = request.args.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'User ID not provided'}), 400
+    
+    user = db.users.find_one({'_id': ObjectId(user_id)})
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    user['_id'] = str(user['_id'])  # Convert ObjectId to string
+    return jsonify(user), 200

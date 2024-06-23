@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:user_app/auth/viewmodel/auth_view_model.dart';
+import 'package:user_app/home/view/home_screen.dart';
 // import 'package:user_app/home_screen.dart';
 
 class LoginScreen extends ConsumerWidget {
@@ -54,20 +55,3 @@ class LoginScreen extends ConsumerWidget {
 }
 
 
-// lib/home_screen.dart
-
-// import 'package:flutter/material.dart';
-
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Screen'),
-      ),
-      body: Center(
-        child: Text('Welcome to the Home Screen!'),
-      ),
-    );
-  }
-}
