@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, jsonify
+# from flask import Flask
 from auth.routes import auth_bp
 from items.routes import items_bp
 from cart.routes import cart_bp
@@ -14,6 +15,10 @@ app.register_blueprint(orders_bp, url_prefix='/orders')
 @app.route('/')
 def home():
     return jsonify(message="Connected to MongoDB")
+
+@app.route('/ping')
+def ping():
+    return jsonify(message="pong")
 
 if __name__ == '__main__':
     app.run(debug=True)
